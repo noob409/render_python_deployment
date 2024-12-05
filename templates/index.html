@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>個人記帳首頁</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="my-4">
+            <h1>歡迎來到個人記帳系統</h1>
+            <!-- Logout 按鈕 -->
+            <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('確定要登出嗎？')">Logout</button>
+            </form>
+        </header>
+
+        <!-- Flashed Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info" role="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <h2>新增記帳紀錄</h2>
+        <form action="{{ url_for('add_expense') }}" method="POST">
+            <div class="form-group">
+                <label for="amount">金額:</label>
+                <input type="number" name="amount" class="form-control" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="category">類別:</label>
+                <input type="text" name="category" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="description">描述:</label>
+                <input type="text" name="description" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">新增</button>
+        </form>
+
+        <h2>記帳紀錄</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>類別</th>
+                    <th>描述</th>
+                    <th>金額</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_expense', id=expense.id) }}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('確定要刪除這筆記錄嗎？')">刪除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
